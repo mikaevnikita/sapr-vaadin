@@ -1,0 +1,14 @@
+version: '2'
+services:
+  mysql:
+    container_name: sapr-db
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_USER: 'root'
+      MYSQL_PASS: 'root'
+    volumes:
+      - /home/user/project/sapr-vaadin/data/:/var/lib/mysql
+    ports:
+      - 3306:3306
