@@ -2,14 +2,11 @@ package ru.mikaev.sapr.factory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 import ru.mikaev.sapr.domain.Construction;
 import ru.mikaev.sapr.domain.Knot;
 import ru.mikaev.sapr.domain.PreprocessorData;
 import ru.mikaev.sapr.domain.Rod;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -20,7 +17,7 @@ import java.util.Set;
 public class DefaultPreprocessorDataFactory {
     public static PreprocessorData defaultPreprocessorData(String dataName,
                                                            LocalDateTime creation) {
-        if(StringUtils.isBlank(dataName) || Objects.isNull(creation)){
+        if (StringUtils.isBlank(dataName) || Objects.isNull(creation)) {
             throw new IllegalArgumentException("Data Name and Creation must not be null");
         }
 

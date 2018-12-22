@@ -88,13 +88,12 @@ public class RepositoryUi extends VerticalLayout {
         grid.setItems(dtos);
     }
 
-    private void deleteData(){
+    private void deleteData() {
         final Optional<PreprocessorDataDto> selectedItem =
                 grid.getSelectionModel().getFirstSelectedItem();
-        if(!selectedItem.isPresent()){
+        if (!selectedItem.isPresent()) {
             Notification.show("You must select a data set!");
-        }
-        else {
+        } else {
             deleteConfirmDialog.open();
         }
     }

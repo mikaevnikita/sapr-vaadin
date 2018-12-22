@@ -23,7 +23,7 @@ repositories {
     mavenCentral()
 }
 
-ext['vaadinVersion'] = '11.0.3'
+ext['vaadinVersion'] = '12.0.3'
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')

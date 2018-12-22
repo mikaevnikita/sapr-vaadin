@@ -10,7 +10,6 @@ import ru.mikaev.sapr.factory.DefaultPreprocessorDataFactory;
 import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
 import ru.mikaev.sapr.repository.PreprocessorDataRepository;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +48,7 @@ public class PreprocessorDataService {
     }
 
     @Transactional
-    public void deleteData(PreprocessorDataDto dto){
+    public void deleteData(PreprocessorDataDto dto) {
         repository.deleteByDataName(dto.getDataName());
     }
 }
