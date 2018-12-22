@@ -12,8 +12,10 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.apache.commons.lang3.StringUtils;
+import ru.mikaev.sapr.common.PreprocessorDataHolder;
 import ru.mikaev.sapr.domain.PreprocessorData;
 import ru.mikaev.sapr.dto.PreprocessorDataDto;
+import ru.mikaev.sapr.mapping.CreationMapper;
 import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
 import ru.mikaev.sapr.service.PreprocessorDataService;
 
@@ -23,7 +25,7 @@ import java.util.Optional;
 
 @SpringComponent
 @UIScope
-@Route("preprocessor")
+@Route("repository")
 public class RepositoryUi extends VerticalLayout {
     private final Grid<PreprocessorDataDto> grid;
     private final PreprocessorDataService dataService;
@@ -32,10 +34,14 @@ public class RepositoryUi extends VerticalLayout {
     private final ConfirmDialog deleteConfirmDialog;
     private final TextField dataNameTextField;
 
+    private final PreprocessorDataHolder holder;
+
     public RepositoryUi(PreprocessorDataService dataService,
-                        PreprocessorDataMapper mapper) {
+                        PreprocessorDataMapper mapper,
+                        PreprocessorDataHolder holder) {
         this.dataService = dataService;
         this.mapper = mapper;
+        this.holder = holder;
 
         grid = new Grid<>();
         dataNameTextField = new TextField();
@@ -52,13 +58,13 @@ public class RepositoryUi extends VerticalLayout {
                     grid.getSelectionModel().getFirstSelectedItem().get();
             dataService.deleteData(selectedItem);
             deleteConfirmDialog.close();
-            updatePreprocessorData();
+            updateGrid();
         });
         deleteConfirmDialog.addRejectListener(e -> deleteConfirmDialog.close());
         deleteConfirmDialog.setConfirmButtonTheme("error primary");
 
         grid.addColumn(PreprocessorDataDto::getDataName).setHeader("Name");
-        grid.addColumn(PreprocessorDataDto::getCreationDateTime).setHeader("Creation");
+        grid.addColumn(dto -> CreationMapper.creationToString(dto.getCreationDateTime())).setHeader("Creation");
         grid.addColumn(dto -> dto.getConstruction().getRods().size()).setHeader("Rods");
 
         VerticalLayout mainLayout = new VerticalLayout();
@@ -68,10 +74,10 @@ public class RepositoryUi extends VerticalLayout {
 
         add(mainLayout);
 
-        updatePreprocessorData();
+        updateGrid();
     }
 
-    private void updatePreprocessorData() {
+    private void updateGrid() {
         final String dataName = dataNameTextField.getValue();
         final List<PreprocessorData> dataList;
 
@@ -98,23 +104,35 @@ public class RepositoryUi extends VerticalLayout {
         }
     }
 
+    private void updateData() {
+        final Optional<PreprocessorDataDto> selectedItem =
+                grid.getSelectionModel().getFirstSelectedItem();
+        if (!selectedItem.isPresent()) {
+            Notification.show("You must select a data set!");
+        } else {
+            holder.setPreprocessorData(selectedItem.get());
+            getUI().ifPresent(ui -> ui.navigate("preprocessor"));
+        }
+    }
+
     private HorizontalLayout getCreatePanel() {
         HorizontalLayout createPanel = new HorizontalLayout();
 
         Button createButton = new Button("Create");
         createButton.addClickListener(event -> {
             dataService.createData(dataNameTextField.getValue());
-            updatePreprocessorData();
+            updateGrid();
         });
 
         Button deleteButton = new Button("Delete");
         deleteButton.addClickListener(event -> deleteData());
 
         Button updateButton = new Button("Update");
+        updateButton.addClickListener(event -> updateData());
 
         dataNameTextField.setPlaceholder("Filter by name..");
         dataNameTextField.setValueChangeMode(ValueChangeMode.EAGER);
-        dataNameTextField.addValueChangeListener(e -> updatePreprocessorData());
+        dataNameTextField.addValueChangeListener(e -> updateGrid());
 
         createPanel.add(dataNameTextField, createButton, deleteButton, updateButton);
 
