@@ -56,6 +56,9 @@ public class RepositoryUi extends VerticalLayout {
         deleteConfirmDialog.addConfirmListener(e -> {
             PreprocessorDataDto selectedItem =
                     grid.getSelectionModel().getFirstSelectedItem().get();
+            if(selectedItem == holder.getPreprocessorData().get()){
+                holder.setPreprocessorData(null);
+            }
             dataService.deleteData(selectedItem);
             deleteConfirmDialog.close();
             updateGrid();
@@ -110,7 +113,7 @@ public class RepositoryUi extends VerticalLayout {
         if (!selectedItem.isPresent()) {
             Notification.show("You must select a data set!");
         } else {
-            holder.setPreprocessorData(selectedItem.get());
+            holder.setPreprocessorData(selectedItem);
             getUI().ifPresent(ui -> ui.navigate("preprocessor"));
         }
     }
@@ -127,7 +130,7 @@ public class RepositoryUi extends VerticalLayout {
         Button deleteButton = new Button("Delete");
         deleteButton.addClickListener(event -> deleteData());
 
-        Button updateButton = new Button("Update");
+        Button updateButton = new Button("Edit");
         updateButton.addClickListener(event -> updateData());
 
         dataNameTextField.setPlaceholder("Filter by name..");

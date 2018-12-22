@@ -6,10 +6,12 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mikaev.sapr.dto.PreprocessorDataDto;
 
+import java.util.Optional;
+
 @Component
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class PreprocessorDataHolder {
-    private PreprocessorDataDto preprocessorData;
+    private Optional<PreprocessorDataDto> preprocessorData;
 }
