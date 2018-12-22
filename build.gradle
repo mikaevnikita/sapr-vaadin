@@ -34,6 +34,11 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
     compileOnly('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+
+    compile group: 'com.vaadin', name: 'vaadin-confirm-dialog-flow', version: '1.1.1'
 }
 
 dependencyManagement {

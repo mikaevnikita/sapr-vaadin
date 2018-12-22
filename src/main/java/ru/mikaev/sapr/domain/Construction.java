@@ -6,36 +6,42 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import java.time.LocalDateTime;
+import javax.persistence.OneToMany;
+import java.util.Set;
 
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
-public class PreprocessorData {
+public class Construction {
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(name = "data_name", unique = true)
-    private String dataName;
+    /**
+     * Заделка слева
+     */
+    private boolean supportLeft;
 
-    @Column(name = "creation_date_time")
-    private LocalDateTime creationDateTime;
+    /**
+     * Заделка справа
+     */
+    private boolean supportRight;
 
-    @OneToOne(
+    /**
+     * Стержни
+     */
+    @OneToMany(
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     @JoinColumn(name = "construction_id")
-    private Construction construction;
+    private Set<Rod> rods;
 }

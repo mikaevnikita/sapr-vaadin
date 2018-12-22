@@ -1,18 +1,14 @@
 package ru.mikaev.sapr.ui;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinRequest;
-import elemental.html.Navigator;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Route
 public class MainView extends VerticalLayout {
-    MainView(){
+    MainView() {
         H1 header = new H1("SAPR by Mikaev");
 
         add(header);

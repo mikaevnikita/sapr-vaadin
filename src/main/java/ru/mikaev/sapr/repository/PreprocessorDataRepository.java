@@ -12,4 +12,8 @@ public interface PreprocessorDataRepository extends CrudRepository<PreprocessorD
     Optional<PreprocessorData> findByDataName(String dataName);
 
     List<PreprocessorData> findAll();
+
+    List<PreprocessorData> findByDataNameContaining(String dataName);
+
+    void deleteByDataName(String dataName);
 }
