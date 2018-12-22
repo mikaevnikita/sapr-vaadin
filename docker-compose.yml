@@ -3,12 +3,12 @@ services:
   mysql:
     container_name: sapr-db
     restart: always
-    image: mysql:latest
+    image: postgres:9
     environment:
-      MYSQL_ROOT_PASSWORD: 'root'
-      MYSQL_USER: 'root'
-      MYSQL_PASS: 'root'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASS: 'postgres'
+      POSTGRES_DB: 'sapr'
     volumes:
-      - /home/user/project/sapr-vaadin/data/:/var/lib/mysql
+      - ./data/:/var/lib/postgresql/
     ports:
-      - 3306:3306
+      - 5432:5432
