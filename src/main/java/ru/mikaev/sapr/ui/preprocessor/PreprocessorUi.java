@@ -3,6 +3,10 @@ package ru.mikaev.sapr.ui.preprocessor;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -12,15 +16,21 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import ru.mikaev.sapr.common.PreprocessorDataHolder;
+import ru.mikaev.sapr.dto.ConstructionDto;
 import ru.mikaev.sapr.dto.KnotDto;
 import ru.mikaev.sapr.dto.PreprocessorDataDto;
 import ru.mikaev.sapr.dto.RodDto;
+import ru.mikaev.sapr.factory.DefaultPreprocessorDataFactory;
 import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
+import ru.mikaev.sapr.mapping.RodMapper;
 import ru.mikaev.sapr.service.PreprocessorDataService;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @SpringComponent
 @UIScope
@@ -31,19 +41,41 @@ public class PreprocessorUi
     private final PreprocessorDataService dataService;
     private final PreprocessorDataMapper mapper;
 
+    private final RodMapper rodMapper;
+
     private final PreprocessorDataHolder holder;
 
     private final Grid<RodDto> rodGrid;
     private final Grid<KnotDto> knotGrid;
 
+    private int rodGridSequance = 0;
+    private int knotGridSequance = 0;
+
+    private final H2 datasetNameH2;
+
+    private final Checkbox leftSupportCheckbox;
+
+    private final Checkbox rightSupportCheckbox;
+
     public PreprocessorUi(PreprocessorDataService dataService,
                           PreprocessorDataMapper mapper,
-                          PreprocessorDataHolder holder) {
+                          PreprocessorDataHolder holder,
+                          RodMapper rodMapper) {
         this.dataService = dataService;
         this.mapper = mapper;
         this.holder = holder;
+        this.rodMapper = rodMapper;
+
+        datasetNameH2 = new H2();
+
+        leftSupportCheckbox = new Checkbox("Left support");
+        leftSupportCheckbox.addValueChangeListener(e -> onLeftSupportChanged(e.getOldValue(), e.getValue()));
+
+        rightSupportCheckbox = new Checkbox("Right support");
+        rightSupportCheckbox.addValueChangeListener(e -> onRightSupportChanged(e.getOldValue(), e.getValue()));
 
         rodGrid = new Grid<>();
+        rodGrid.addColumn(this::indexOfRod).setHeader("Number");
         rodGrid.addColumn(RodDto::getL).setHeader("L");
         rodGrid.addColumn(RodDto::getA).setHeader("A");
         rodGrid.addColumn(RodDto::getE).setHeader("E");
@@ -51,6 +83,7 @@ public class PreprocessorUi
         rodGrid.addColumn(RodDto::getLoad).setHeader("Load");
 
         knotGrid = new Grid<>();
+        knotGrid.addColumn(this::indexOfKnot).setHeader("Number");
         knotGrid.addColumn(KnotDto::getLoad).setHeader("Load");
 
         HorizontalLayout menu = getMenu();
@@ -58,23 +91,36 @@ public class PreprocessorUi
         HorizontalLayout supports = getSupports();
 
         HorizontalLayout gridLayout = new HorizontalLayout();
-        gridLayout.add(rodGrid, knotGrid);
+
+        VerticalLayout rodGridLayout = new VerticalLayout();
+        rodGridLayout.add(new H2("Rods"), rodGrid);
+        rodGridLayout.setSizeFull();
+
+        VerticalLayout knotGridLayout = new VerticalLayout();
+        knotGridLayout.add(new H2("Knots"), knotGrid);
+        knotGridLayout.setSizeFull();
+
+        gridLayout.add(rodGridLayout, knotGridLayout);
         gridLayout.setSizeFull();
 
 
+        add(datasetNameH2);
         add(menu);
         add(supports);
         add(gridLayout);
 
         updateRodGrid();
         updateKnotGrid();
+        updateSupports();
     }
 
     private void updateRodGrid() {
         holder
                 .getPreprocessorData()
-                .ifPresent(dto ->
-                        rodGrid.setItems(dto.getConstruction().getRods()));
+                .ifPresent(dto -> {
+                    rodGridSequance = 0;
+                    rodGrid.setItems(dto.getConstruction().getRods());
+                });
     }
 
     private void updateKnotGrid() {
@@ -88,7 +134,7 @@ public class PreprocessorUi
                 .getConstruction()
                 .getRods();
 
-        List<KnotDto> knots = new ArrayList<>();
+        Set<KnotDto> knots = new LinkedHashSet<>();
 
         for (RodDto rod : rods) {
             final KnotDto leftKnot = rod.getLeftKnot();
@@ -97,22 +143,56 @@ public class PreprocessorUi
             knots.add(rightKnot);
         }
 
+        knotGridSequance = 0;
         knotGrid.setItems(knots);
+    }
+
+    private void updateSupports(){
+        final Optional<PreprocessorDataDto> preprocessorData = holder.getPreprocessorData();
+        if (!preprocessorData.isPresent()) {
+            return;
+        }
+
+        final ConstructionDto construction = preprocessorData.get().getConstruction();
+        leftSupportCheckbox.setValue(construction.isSupportLeft());
+        rightSupportCheckbox.setValue(construction.isSupportRight());
     }
 
     private HorizontalLayout getMenu() {
         HorizontalLayout menu = new HorizontalLayout();
-        menu.add(new Button("Previous", event -> getUI().ifPresent(ui -> ui.navigate("repository"))));
+        menu.add(new Button("Previous page", event -> getUI().ifPresent(ui -> ui.navigate("repository"))));
+        menu.add(new Button("Add rod", event -> {
+            addRod();
+        }));
         menu.add(new Button("Save", event -> Notification.show("Save")));
-        menu.add(new Button("Draw", event -> Notification.show("Draw")));
+        menu.add(new Button("Draw", event -> Notification.show("Draw construction")));
 
         return menu;
     }
 
+    private void addRod(){
+        final List<RodDto> rods = holder.getPreprocessorData().get().getConstruction().getRods();
+
+        final RodDto rodDto = rodMapper.fromRod(DefaultPreprocessorDataFactory.defaultRod());
+
+        rodDto.setLeftKnot(rods.get(rods.size() - 1).getRightKnot());
+
+        rods.add(rodDto);
+
+        updateRodGrid();
+        updateKnotGrid();
+    }
+
+    private int indexOfRod(RodDto rodDto){
+        return ++rodGridSequance;
+    }
+
+    private int indexOfKnot(KnotDto knotDto){
+        return ++knotGridSequance;
+    }
+
     private HorizontalLayout getSupports() {
         HorizontalLayout supports = new HorizontalLayout();
-        Checkbox leftSupportCheckbox = new Checkbox("Left support");
-        Checkbox rightSupportCheckbox = new Checkbox("Right support");
 
         supports.add(leftSupportCheckbox);
         supports.add(rightSupportCheckbox);
@@ -120,11 +200,40 @@ public class PreprocessorUi
         return supports;
     }
 
+
+    private void onLeftSupportChanged(Boolean oldValue, Boolean newValue){
+        if(!(newValue || rightSupportCheckbox.getValue())){
+            Notification.show("Хотя бы одна заделка должна существовать!");
+            leftSupportCheckbox.setValue(oldValue);
+        }
+
+        updateSupportsInDto();
+    }
+
+
+    private void onRightSupportChanged(Boolean oldValue, Boolean newValue){
+        if(!(newValue || leftSupportCheckbox.getValue())){
+            Notification.show("Хотя бы одна заделка должна существовать!");
+            rightSupportCheckbox.setValue(oldValue);
+        }
+
+        updateSupportsInDto();
+    }
+
+    private void updateSupportsInDto(){
+        final ConstructionDto construction = holder.getPreprocessorData().get().getConstruction();
+
+        construction.setSupportLeft(leftSupportCheckbox.getValue());
+        construction.setSupportRight(rightSupportCheckbox.getValue());
+    }
+
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         if (holder.getPreprocessorData().isPresent()) {
+            datasetNameH2.setText("Name: " + holder.getPreprocessorData().get().getDataName());
             updateRodGrid();
             updateKnotGrid();
+            updateSupports();
         } else {
             getUI().ifPresent(ui -> ui.navigate(""));
         }

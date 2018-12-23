@@ -113,7 +113,8 @@ public class RepositoryUi extends VerticalLayout {
         if (!selectedItem.isPresent()) {
             Notification.show("You must select a data set!");
         } else {
-            holder.setPreprocessorData(selectedItem);
+            final PreprocessorDataDto clone = new PreprocessorDataDto(selectedItem.get());
+            holder.setPreprocessorData(Optional.of(clone));
             getUI().ifPresent(ui -> ui.navigate("preprocessor"));
         }
     }
@@ -137,7 +138,9 @@ public class RepositoryUi extends VerticalLayout {
         dataNameTextField.setValueChangeMode(ValueChangeMode.EAGER);
         dataNameTextField.addValueChangeListener(e -> updateGrid());
 
-        createPanel.add(dataNameTextField, createButton, deleteButton, updateButton);
+        Button previousButton = new Button("Previous page", event -> getUI().ifPresent(ui -> ui.navigate("")));
+
+        createPanel.add(previousButton, dataNameTextField, createButton, deleteButton, updateButton);
 
         return createPanel;
     }

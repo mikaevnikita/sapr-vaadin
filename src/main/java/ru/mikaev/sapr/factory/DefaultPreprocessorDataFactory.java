@@ -38,6 +38,10 @@ public class DefaultPreprocessorDataFactory {
     }
 
     private static List<Rod> defaultRods() {
+        return Arrays.asList(defaultRod());
+    }
+
+    public static Rod defaultRod(){
         final Rod rod = Rod
                 .builder()
                 .a(0)
@@ -48,8 +52,7 @@ public class DefaultPreprocessorDataFactory {
                 .leftKnot(defaultKnot())
                 .rightKnot(defaultKnot())
                 .build();
-
-        return Arrays.asList(rod);
+        return rod;
     }
 
     private static Knot defaultKnot() {

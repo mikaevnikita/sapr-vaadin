@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PreprocessorDataDto {
+public class PreprocessorDataDto implements Cloneable{
     @NotBlank
     private String dataName;
 
@@ -21,4 +21,10 @@ public class PreprocessorDataDto {
 
     @NotNull
     private ConstructionDto construction;
+
+    public PreprocessorDataDto(PreprocessorDataDto dto){
+        this.dataName = dto.dataName;
+        this.creationDateTime = dto.creationDateTime;
+        this.construction = new ConstructionDto(dto.getConstruction());
+    }
 }

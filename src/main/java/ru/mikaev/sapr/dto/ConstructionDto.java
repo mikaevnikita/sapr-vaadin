@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConstructionDto {
+public class ConstructionDto{
     /**
      * Заделка слева
      */
@@ -26,4 +27,10 @@ public class ConstructionDto {
      * Стержни
      */
     private List<RodDto> rods;
+
+    public ConstructionDto(ConstructionDto dto){
+        this.supportLeft = dto.supportLeft;
+        this.supportRight = dto.supportRight;
+        this.rods = dto.getRods().stream().map(RodDto::new).collect(Collectors.toList());
+    }
 }
