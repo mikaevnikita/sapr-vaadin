@@ -127,7 +127,7 @@ public class PreprocessorUi
         knotLoadField.setPlaceholder("Load");
         knotLoadField.setPattern("-?[0-9]*");
         knotLoadField.setPreventInvalidInput(true);
-        editKnotButton = new Button("Edit knot");
+        editKnotButton = new Button("Edit knot", e -> onEditKnot());
 
         leftSupportCheckbox = new Checkbox("Left support");
         leftSupportCheckbox.addValueChangeListener(e -> onLeftSupportChanged(e.getOldValue(), e.getValue()));
@@ -146,6 +146,7 @@ public class PreprocessorUi
         knotGrid = new Grid<>();
         knotGrid.addColumn(this::indexOfKnot).setHeader("Number");
         knotGrid.addColumn(KnotDto::getLoad).setHeader("Load");
+        knotGrid.addSelectionListener(e -> onSelectKnot(e.getFirstSelectedItem()));
 
         HorizontalLayout menu = getMenu();
 
@@ -165,6 +166,12 @@ public class PreprocessorUi
         updateRodGrid();
         updateKnotGrid();
         updateSupports();
+    }
+
+    private void onSelectKnot(Optional<KnotDto> firstSelectedItem) {
+        if(firstSelectedItem.isPresent()){
+            knotLoadField.setValue(String.valueOf(firstSelectedItem.get().getLoad()));
+        }
     }
 
     private void onRodTextFieldChanged(String oldValue, String newValue, TextField source) {
@@ -257,8 +264,18 @@ public class PreprocessorUi
 
     private void onEditRod(){
         if(editRodButton.getText().equals("Save rod")){
+            final RodDto selectedRod = rodGrid.getSelectionModel().getFirstSelectedItem().get();
+
+            selectedRod.setL(Integer.valueOf(rodL.getValue()));
+            selectedRod.setA(Integer.valueOf(rodA.getValue()));
+            selectedRod.setE(Integer.valueOf(rodE.getValue()));
+            selectedRod.setSigma(Integer.valueOf(rodSigma.getValue()));
+            selectedRod.setLoad(Integer.valueOf(rodLoad.getValue()));
+
             editRodLayout.setVisible(false);
             editRodButton.setText("Edit rod");
+
+            updateRodGrid();
         }
         else{
             if(rodGrid.getSelectionModel().getFirstSelectedItem().isPresent()){
@@ -276,6 +293,15 @@ public class PreprocessorUi
             else{
                 Notification.show("You must select a rod!");
             }
+        }
+    }
+
+    private void onEditKnot(){
+        if(knotGrid.getSelectionModel().getFirstSelectedItem().isPresent()){
+            final KnotDto selectedKnot = knotGrid.getSelectionModel().getFirstSelectedItem().get();
+            selectedKnot.setLoad(Integer.valueOf(knotLoadField.getValue()));
+
+            updateKnotGrid();
         }
     }
 
