@@ -113,8 +113,7 @@ public class RepositoryUi extends VerticalLayout {
         if (!selectedItem.isPresent()) {
             Notification.show("You must select a data set!");
         } else {
-            final PreprocessorDataDto clone = new PreprocessorDataDto(selectedItem.get());
-            holder.setPreprocessorData(Optional.of(clone));
+            holder.setPreprocessorData(selectedItem);
             getUI().ifPresent(ui -> ui.navigate("preprocessor"));
         }
     }

@@ -3,10 +3,7 @@ package ru.mikaev.sapr.ui.preprocessor;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -25,8 +22,7 @@ import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
 import ru.mikaev.sapr.mapping.RodMapper;
 import ru.mikaev.sapr.service.PreprocessorDataService;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -161,13 +157,18 @@ public class PreprocessorUi
     private HorizontalLayout getMenu() {
         HorizontalLayout menu = new HorizontalLayout();
         menu.add(new Button("Previous page", event -> getUI().ifPresent(ui -> ui.navigate("repository"))));
-        menu.add(new Button("Add rod", event -> {
-            addRod();
-        }));
-        menu.add(new Button("Save", event -> Notification.show("Save")));
+        menu.add(new Button("Add rod", event -> addRod()));
+        menu.add(new Button("Delete rod", event -> deleteRod()));
+        menu.add(new Button("Save", event -> saveData()));
         menu.add(new Button("Draw", event -> Notification.show("Draw construction")));
 
         return menu;
+    }
+
+
+    private void saveData(){
+        dataService.mergePreprocessorData(holder.getPreprocessorData().get());
+        holder.updateHolder();
     }
 
     private void addRod(){
@@ -181,6 +182,19 @@ public class PreprocessorUi
 
         updateRodGrid();
         updateKnotGrid();
+    }
+
+    private void deleteRod(){
+        final List<RodDto> rods = holder.getPreprocessorData().get().getConstruction().getRods();
+
+        if(rods.size() == 1){
+            Notification.show("Хотя бы один стержень должен быть!");
+        }
+        else{
+            rods.remove(rods.size() - 1);
+            updateRodGrid();
+            updateKnotGrid();
+        }
     }
 
     private int indexOfRod(RodDto rodDto){
@@ -203,7 +217,7 @@ public class PreprocessorUi
 
     private void onLeftSupportChanged(Boolean oldValue, Boolean newValue){
         if(!(newValue || rightSupportCheckbox.getValue())){
-            Notification.show("Хотя бы одна заделка должна существовать!");
+            Notification.show("At least one support must be!");
             leftSupportCheckbox.setValue(oldValue);
         }
 
@@ -213,7 +227,7 @@ public class PreprocessorUi
 
     private void onRightSupportChanged(Boolean oldValue, Boolean newValue){
         if(!(newValue || leftSupportCheckbox.getValue())){
-            Notification.show("Хотя бы одна заделка должна существовать!");
+            Notification.show("At least one support must be!");
             rightSupportCheckbox.setValue(oldValue);
         }
 
@@ -230,6 +244,7 @@ public class PreprocessorUi
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         if (holder.getPreprocessorData().isPresent()) {
+            holder.updateHolder();
             datasetNameH2.setText("Name: " + holder.getPreprocessorData().get().getDataName());
             updateRodGrid();
             updateKnotGrid();

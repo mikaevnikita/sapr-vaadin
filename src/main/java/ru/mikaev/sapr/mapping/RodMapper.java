@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.mikaev.sapr.domain.Rod;
 import ru.mikaev.sapr.dto.RodDto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,9 +50,22 @@ public class RodMapper {
     }
 
     public List<RodDto> fromRods(List<Rod> rods) {
-        return rods
-                .stream()
-                .map(this::fromRod)
-                .collect(Collectors.toList());
+        List<RodDto> rodDtos = new ArrayList<>();
+
+        boolean isStart = true;
+
+        for(Rod rod : rods){
+            if(isStart){
+                rodDtos.add(fromRod(rod));
+                isStart = false;
+            }
+            else{
+                RodDto rodDto = fromRod(rod);
+                rodDto.setLeftKnot(rodDtos.get(rodDtos.size() - 1).getRightKnot());
+                rodDtos.add(rodDto);
+            }
+        }
+
+        return rodDtos;
     }
 }

@@ -2,7 +2,13 @@ package ru.mikaev.sapr.mapping;
 
 import org.springframework.stereotype.Component;
 import ru.mikaev.sapr.domain.Construction;
+import ru.mikaev.sapr.domain.Rod;
 import ru.mikaev.sapr.dto.ConstructionDto;
+import ru.mikaev.sapr.dto.RodDto;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ConstructionMapper {
@@ -30,5 +36,30 @@ public class ConstructionMapper {
                 .supportRight(construction.isSupportRight())
                 .rods(rodMapper.fromRods(construction.getRods()))
                 .build();
+    }
+
+    public void updateEntityByDto(Construction construction, ConstructionDto dto){
+        construction.setSupportLeft(dto.isSupportLeft());
+        construction.setSupportRight(dto.isSupportRight());
+
+        List<RodDto> rodDtos = dto.getRods();
+
+        List<Rod> rods = new ArrayList<>();
+
+        boolean isStart = true;
+
+        for(RodDto rodDto : rodDtos){
+            if(isStart){
+                rods.add(rodMapper.toRod(rodDto));
+                isStart = false;
+            }
+            else{
+                Rod rod = rodMapper.toRod(rodDto);
+                rod.setLeftKnot(rods.get(rods.size() - 1).getRightKnot());
+                rods.add(rod);
+            }
+        }
+
+        construction.setRods(rods);
     }
 }
