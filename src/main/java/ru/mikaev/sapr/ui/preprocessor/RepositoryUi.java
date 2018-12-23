@@ -56,7 +56,7 @@ public class RepositoryUi extends VerticalLayout {
         deleteConfirmDialog.addConfirmListener(e -> {
             PreprocessorDataDto selectedItem =
                     grid.getSelectionModel().getFirstSelectedItem().get();
-            if(selectedItem == holder.getPreprocessorData().get()){
+            if (selectedItem == holder.getPreprocessorData().get()) {
                 holder.setPreprocessorData(null);
             }
             dataService.deleteData(selectedItem);

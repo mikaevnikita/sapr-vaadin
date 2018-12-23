@@ -1,8 +1,6 @@
 package ru.mikaev.sapr.common;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mikaev.sapr.dto.PreprocessorDataDto;
 
@@ -13,7 +11,7 @@ import java.util.Optional;
 public class PreprocessorDataHolder {
     private Optional<PreprocessorDataDto> preprocessorData;
 
-    public PreprocessorDataHolder(){
+    public PreprocessorDataHolder() {
         preprocessorData = Optional.empty();
     }
 }

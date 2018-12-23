@@ -12,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -43,5 +43,5 @@ public class Construction {
             orphanRemoval = true
     )
     @JoinColumn(name = "construction_id")
-    private Set<Rod> rods;
+    private List<Rod> rods;
 }

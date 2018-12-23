@@ -4,8 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.mikaev.sapr.domain.Knot;
 import ru.mikaev.sapr.dto.KnotDto;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,17 +20,17 @@ public class KnotMapper {
         return new KnotDto(knot.getLoad());
     }
 
-    public Set<Knot> toKnots(Set<KnotDto> dtos) {
+    public List<Knot> toKnots(List<KnotDto> dtos) {
         return dtos
                 .stream()
                 .map(this::toKnot)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toList());
     }
 
-    public Set<KnotDto> fromKnots(Set<Knot> knots) {
+    public List<KnotDto> fromKnots(List<Knot> knots) {
         return knots
                 .stream()
                 .map(this::fromKnot)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toList());
     }
 }

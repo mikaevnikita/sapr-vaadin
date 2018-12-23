@@ -9,9 +9,8 @@ import ru.mikaev.sapr.domain.Rod;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Component
 public class DefaultPreprocessorDataFactory {
@@ -38,7 +37,7 @@ public class DefaultPreprocessorDataFactory {
                 .build();
     }
 
-    private static Set<Rod> defaultRods() {
+    private static List<Rod> defaultRods() {
         final Rod rod = Rod
                 .builder()
                 .a(0)
@@ -50,7 +49,7 @@ public class DefaultPreprocessorDataFactory {
                 .rightKnot(defaultKnot())
                 .build();
 
-        return new LinkedHashSet<>(Arrays.asList(rod));
+        return Arrays.asList(rod);
     }
 
     private static Knot defaultKnot() {

@@ -4,8 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.mikaev.sapr.domain.Rod;
 import ru.mikaev.sapr.dto.RodDto;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,17 +41,17 @@ public class RodMapper {
                 .build();
     }
 
-    public Set<Rod> toRods(Set<RodDto> dtos) {
+    public List<Rod> toRods(List<RodDto> dtos) {
         return dtos
                 .stream()
                 .map(this::toRod)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toList());
     }
 
-    public Set<RodDto> fromRods(Set<Rod> rods) {
+    public List<RodDto> fromRods(List<Rod> rods) {
         return rods
                 .stream()
                 .map(this::fromRod)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toList());
     }
 }

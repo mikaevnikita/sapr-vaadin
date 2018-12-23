@@ -6,29 +6,21 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.aspectj.weaver.ast.Not;
 import ru.mikaev.sapr.common.PreprocessorDataHolder;
-import ru.mikaev.sapr.domain.Knot;
-import ru.mikaev.sapr.domain.Rod;
-import ru.mikaev.sapr.dto.ConstructionDto;
 import ru.mikaev.sapr.dto.KnotDto;
 import ru.mikaev.sapr.dto.PreprocessorDataDto;
 import ru.mikaev.sapr.dto.RodDto;
-import ru.mikaev.sapr.mapping.CreationMapper;
 import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
 import ru.mikaev.sapr.service.PreprocessorDataService;
 
-import javax.validation.constraints.NotNull;
-import java.util.LinkedHashSet;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @SpringComponent
 @UIScope
@@ -65,36 +57,40 @@ public class PreprocessorUi
 
         HorizontalLayout supports = getSupports();
 
+        HorizontalLayout gridLayout = new HorizontalLayout();
+        gridLayout.add(rodGrid, knotGrid);
+        gridLayout.setSizeFull();
+
 
         add(menu);
         add(supports);
-        add(rodGrid);
+        add(gridLayout);
 
         updateRodGrid();
         updateKnotGrid();
     }
 
-    private void updateRodGrid(){
+    private void updateRodGrid() {
         holder
                 .getPreprocessorData()
                 .ifPresent(dto ->
                         rodGrid.setItems(dto.getConstruction().getRods()));
     }
 
-    private void updateKnotGrid(){
+    private void updateKnotGrid() {
         final Optional<PreprocessorDataDto> preprocessorData = holder.getPreprocessorData();
-        if(!preprocessorData.isPresent()){
+        if (!preprocessorData.isPresent()) {
             return;
         }
 
-        final Set<RodDto> rods = preprocessorData
+        final List<RodDto> rods = preprocessorData
                 .get()
                 .getConstruction()
                 .getRods();
 
-        Set<KnotDto> knots = new LinkedHashSet<>();
+        List<KnotDto> knots = new ArrayList<>();
 
-        for(RodDto rod : rods){
+        for (RodDto rod : rods) {
             final KnotDto leftKnot = rod.getLeftKnot();
             final KnotDto rightKnot = rod.getRightKnot();
             knots.add(leftKnot);
@@ -104,7 +100,7 @@ public class PreprocessorUi
         knotGrid.setItems(knots);
     }
 
-    private HorizontalLayout getMenu(){
+    private HorizontalLayout getMenu() {
         HorizontalLayout menu = new HorizontalLayout();
         menu.add(new Button("Previous", event -> getUI().ifPresent(ui -> ui.navigate("repository"))));
         menu.add(new Button("Save", event -> Notification.show("Save")));
@@ -113,7 +109,7 @@ public class PreprocessorUi
         return menu;
     }
 
-    private HorizontalLayout getSupports(){
+    private HorizontalLayout getSupports() {
         HorizontalLayout supports = new HorizontalLayout();
         Checkbox leftSupportCheckbox = new Checkbox("Left support");
         Checkbox rightSupportCheckbox = new Checkbox("Right support");
@@ -127,9 +123,9 @@ public class PreprocessorUi
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         if (holder.getPreprocessorData().isPresent()) {
-            Notification.show(holder.getPreprocessorData().get().getDataName());
-        }
-        else{
+            updateRodGrid();
+            updateKnotGrid();
+        } else {
             getUI().ifPresent(ui -> ui.navigate(""));
         }
     }
