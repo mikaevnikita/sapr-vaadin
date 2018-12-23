@@ -65,13 +65,10 @@ public class PreprocessorUi
 
         HorizontalLayout supports = getSupports();
 
-        SplitLayout splitLayout = new SplitLayout();
-        splitLayout.addToPrimary(rodGrid);
-        splitLayout.addToSecondary(knotGrid);
 
         add(menu);
         add(supports);
-        add(splitLayout);
+        add(rodGrid);
 
         updateRodGrid();
         updateKnotGrid();

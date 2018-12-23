@@ -9,9 +9,11 @@ import ru.mikaev.sapr.dto.PreprocessorDataDto;
 import java.util.Optional;
 
 @Component
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class PreprocessorDataHolder {
     private Optional<PreprocessorDataDto> preprocessorData;
+
+    public PreprocessorDataHolder(){
+        preprocessorData = Optional.empty();
+    }
 }
