@@ -22,8 +22,8 @@ public class PreprocessorDataHolder {
         preprocessorData = Optional.empty();
     }
 
-    public void updateHolder(){
-        if(!preprocessorData.isPresent())
+    public void updateHolder() {
+        if (!preprocessorData.isPresent())
             return;
 
         final PreprocessorDataDto dto =

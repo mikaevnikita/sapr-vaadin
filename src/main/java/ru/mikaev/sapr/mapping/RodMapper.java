@@ -54,12 +54,11 @@ public class RodMapper {
 
         boolean isStart = true;
 
-        for(Rod rod : rods){
-            if(isStart){
+        for (Rod rod : rods) {
+            if (isStart) {
                 rodDtos.add(fromRod(rod));
                 isStart = false;
-            }
-            else{
+            } else {
                 RodDto rodDto = fromRod(rod);
                 rodDto.setLeftKnot(rodDtos.get(rodDtos.size() - 1).getRightKnot());
                 rodDtos.add(rodDto);

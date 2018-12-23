@@ -8,7 +8,6 @@ import ru.mikaev.sapr.dto.RodDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class ConstructionMapper {
@@ -38,7 +37,7 @@ public class ConstructionMapper {
                 .build();
     }
 
-    public void updateEntityByDto(Construction construction, ConstructionDto dto){
+    public void updateEntityByDto(Construction construction, ConstructionDto dto) {
         construction.setSupportLeft(dto.isSupportLeft());
         construction.setSupportRight(dto.isSupportRight());
 
@@ -48,12 +47,11 @@ public class ConstructionMapper {
 
         boolean isStart = true;
 
-        for(RodDto rodDto : rodDtos){
-            if(isStart){
+        for (RodDto rodDto : rodDtos) {
+            if (isStart) {
                 rods.add(rodMapper.toRod(rodDto));
                 isStart = false;
-            }
-            else{
+            } else {
                 Rod rod = rodMapper.toRod(rodDto);
                 rod.setLeftKnot(rods.get(rods.size() - 1).getRightKnot());
                 rods.add(rod);

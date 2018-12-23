@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PreprocessorDataDto implements Cloneable{
+public class PreprocessorDataDto implements Cloneable {
     @NotBlank
     private String dataName;
 
@@ -23,7 +22,7 @@ public class PreprocessorDataDto implements Cloneable{
     @NotNull
     private ConstructionDto construction;
 
-    public PreprocessorDataDto(PreprocessorDataDto dto){
+    public PreprocessorDataDto(PreprocessorDataDto dto) {
         this.dataName = dto.dataName;
         this.creationDateTime = dto.creationDateTime;
         this.construction = new ConstructionDto(dto.getConstruction());

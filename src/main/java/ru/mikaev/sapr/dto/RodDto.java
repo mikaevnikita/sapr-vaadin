@@ -24,7 +24,7 @@ public class RodDto {
 
     private KnotDto rightKnot;
 
-    public RodDto(RodDto dto){
+    public RodDto(RodDto dto) {
         this.l = dto.l;
         this.a = dto.a;
         this.e = dto.e;

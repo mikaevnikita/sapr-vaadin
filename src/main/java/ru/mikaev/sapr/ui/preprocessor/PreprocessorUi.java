@@ -4,7 +4,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -25,7 +24,6 @@ import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
 import ru.mikaev.sapr.mapping.RodMapper;
 import ru.mikaev.sapr.service.PreprocessorDataService;
 
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -169,18 +167,18 @@ public class PreprocessorUi
     }
 
     private void onSelectKnot(Optional<KnotDto> firstSelectedItem) {
-        if(firstSelectedItem.isPresent()){
+        if (firstSelectedItem.isPresent()) {
             knotLoadField.setValue(String.valueOf(firstSelectedItem.get().getLoad()));
         }
     }
 
     private void onRodTextFieldChanged(String oldValue, String newValue, TextField source) {
-        if(StringUtils.isBlank(newValue)){
+        if (StringUtils.isBlank(newValue)) {
             source.setValue("0");
         }
     }
 
-    private VerticalLayout getRodLayout(){
+    private VerticalLayout getRodLayout() {
         VerticalLayout rodGridLayout = new VerticalLayout();
 
         HorizontalLayout rodGridOperationsPanel = new HorizontalLayout();
@@ -196,7 +194,7 @@ public class PreprocessorUi
         return rodGridLayout;
     }
 
-    private VerticalLayout getKnotLayout(){
+    private VerticalLayout getKnotLayout() {
         VerticalLayout knotGridLayout = new VerticalLayout();
 
         HorizontalLayout knotGridOperationsPanel = new HorizontalLayout();
@@ -242,7 +240,7 @@ public class PreprocessorUi
         knotGrid.setItems(knots);
     }
 
-    private void updateSupports(){
+    private void updateSupports() {
         final Optional<PreprocessorDataDto> preprocessorData = holder.getPreprocessorData();
         if (!preprocessorData.isPresent()) {
             return;
@@ -262,8 +260,8 @@ public class PreprocessorUi
         return menu;
     }
 
-    private void onEditRod(){
-        if(editRodButton.getText().equals("Save rod")){
+    private void onEditRod() {
+        if (editRodButton.getText().equals("Save rod")) {
             final RodDto selectedRod = rodGrid.getSelectionModel().getFirstSelectedItem().get();
 
             selectedRod.setL(Integer.valueOf(rodL.getValue()));
@@ -276,9 +274,8 @@ public class PreprocessorUi
             editRodButton.setText("Edit rod");
 
             updateRodGrid();
-        }
-        else{
-            if(rodGrid.getSelectionModel().getFirstSelectedItem().isPresent()){
+        } else {
+            if (rodGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
                 editRodLayout.setVisible(true);
                 editRodButton.setText("Save rod");
 
@@ -289,15 +286,14 @@ public class PreprocessorUi
                 rodE.setValue(String.valueOf(selectedRod.getE()));
                 rodSigma.setValue(String.valueOf(selectedRod.getSigma()));
                 rodLoad.setValue(String.valueOf(selectedRod.getLoad()));
-            }
-            else{
+            } else {
                 Notification.show("You must select a rod!");
             }
         }
     }
 
-    private void onEditKnot(){
-        if(knotGrid.getSelectionModel().getFirstSelectedItem().isPresent()){
+    private void onEditKnot() {
+        if (knotGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
             final KnotDto selectedKnot = knotGrid.getSelectionModel().getFirstSelectedItem().get();
             selectedKnot.setLoad(Integer.valueOf(knotLoadField.getValue()));
 
@@ -306,12 +302,12 @@ public class PreprocessorUi
     }
 
 
-    private void saveData(){
+    private void saveData() {
         dataService.mergePreprocessorData(holder.getPreprocessorData().get());
         holder.updateHolder();
     }
 
-    private void addRod(){
+    private void addRod() {
         final List<RodDto> rods = holder.getPreprocessorData().get().getConstruction().getRods();
 
         final RodDto rodDto = rodMapper.fromRod(DefaultPreprocessorDataFactory.defaultRod());
@@ -324,24 +320,23 @@ public class PreprocessorUi
         updateKnotGrid();
     }
 
-    private void deleteRod(){
+    private void deleteRod() {
         final List<RodDto> rods = holder.getPreprocessorData().get().getConstruction().getRods();
 
-        if(rods.size() == 1){
+        if (rods.size() == 1) {
             Notification.show("At least one rod must be!");
-        }
-        else{
+        } else {
             rods.remove(rods.size() - 1);
             updateRodGrid();
             updateKnotGrid();
         }
     }
 
-    private int indexOfRod(RodDto rodDto){
+    private int indexOfRod(RodDto rodDto) {
         return ++rodGridSequance;
     }
 
-    private int indexOfKnot(KnotDto knotDto){
+    private int indexOfKnot(KnotDto knotDto) {
         return ++knotGridSequance;
     }
 
@@ -355,8 +350,8 @@ public class PreprocessorUi
     }
 
 
-    private void onLeftSupportChanged(Boolean oldValue, Boolean newValue){
-        if(!(newValue || rightSupportCheckbox.getValue())){
+    private void onLeftSupportChanged(Boolean oldValue, Boolean newValue) {
+        if (!(newValue || rightSupportCheckbox.getValue())) {
             Notification.show("At least one support must be!");
             leftSupportCheckbox.setValue(oldValue);
         }
@@ -365,8 +360,8 @@ public class PreprocessorUi
     }
 
 
-    private void onRightSupportChanged(Boolean oldValue, Boolean newValue){
-        if(!(newValue || leftSupportCheckbox.getValue())){
+    private void onRightSupportChanged(Boolean oldValue, Boolean newValue) {
+        if (!(newValue || leftSupportCheckbox.getValue())) {
             Notification.show("At least one support must be!");
             rightSupportCheckbox.setValue(oldValue);
         }
@@ -374,7 +369,7 @@ public class PreprocessorUi
         updateSupportsInDto();
     }
 
-    private void updateSupportsInDto(){
+    private void updateSupportsInDto() {
         final ConstructionDto construction = holder.getPreprocessorData().get().getConstruction();
 
         construction.setSupportLeft(leftSupportCheckbox.getValue());

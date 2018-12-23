@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConstructionDto{
+public class ConstructionDto {
     /**
      * Заделка слева
      */
@@ -28,7 +28,7 @@ public class ConstructionDto{
      */
     private List<RodDto> rods;
 
-    public ConstructionDto(ConstructionDto dto){
+    public ConstructionDto(ConstructionDto dto) {
         this.supportLeft = dto.supportLeft;
         this.supportRight = dto.supportRight;
         this.rods = dto.getRods().stream().map(RodDto::new).collect(Collectors.toList());

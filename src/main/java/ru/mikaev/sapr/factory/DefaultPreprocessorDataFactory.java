@@ -41,7 +41,7 @@ public class DefaultPreprocessorDataFactory {
         return Arrays.asList(defaultRod());
     }
 
-    public static Rod defaultRod(){
+    public static Rod defaultRod() {
         final Rod rod = Rod
                 .builder()
                 .a(0)

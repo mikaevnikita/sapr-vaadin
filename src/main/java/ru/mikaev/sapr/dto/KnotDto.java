@@ -1,7 +1,6 @@
 package ru.mikaev.sapr.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -17,7 +16,7 @@ public class KnotDto {
         this.load = load;
     }
 
-    public KnotDto(KnotDto dto){
+    public KnotDto(KnotDto dto) {
         this.load = dto.load;
     }
 }

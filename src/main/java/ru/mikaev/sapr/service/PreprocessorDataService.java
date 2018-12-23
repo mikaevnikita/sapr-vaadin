@@ -11,7 +11,6 @@ import ru.mikaev.sapr.factory.DefaultPreprocessorDataFactory;
 import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
 import ru.mikaev.sapr.repository.PreprocessorDataRepository;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -46,10 +45,10 @@ public class PreprocessorDataService {
         repository.save(data);
     }
 
-    private void validateDto(PreprocessorDataDto dto){
+    private void validateDto(PreprocessorDataDto dto) {
         final ConstructionDto construction = dto.getConstruction();
 
-        if(!(construction.isSupportLeft() || construction.isSupportRight())){
+        if (!(construction.isSupportLeft() || construction.isSupportRight())) {
             throw new IllegalStateException("At least one support must be!");
         }
     }

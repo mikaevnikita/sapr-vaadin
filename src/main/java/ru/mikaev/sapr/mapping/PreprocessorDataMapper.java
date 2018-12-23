@@ -25,7 +25,7 @@ public class PreprocessorDataMapper {
                 .build();
     }
 
-    public void updateEntityByDto(PreprocessorData data, PreprocessorDataDto dto){
+    public void updateEntityByDto(PreprocessorData data, PreprocessorDataDto dto) {
         data.setDataName(dto.getDataName());
         data.setCreationDateTime(dto.getCreationDateTime());
         constructionMapper.updateEntityByDto(data.getConstruction(), dto.getConstruction());
