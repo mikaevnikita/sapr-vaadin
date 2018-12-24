@@ -2,6 +2,7 @@ package ru.mikaev.sapr.ui.preprocessor;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -10,6 +11,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -34,7 +37,7 @@ import java.util.Set;
 @Route("preprocessor")
 public class PreprocessorUi
         extends VerticalLayout
-        implements AfterNavigationObserver {
+        implements AfterNavigationObserver, BeforeLeaveObserver {
     private final PreprocessorDataService dataService;
     private final PreprocessorDataMapper mapper;
 
@@ -68,6 +71,8 @@ public class PreprocessorUi
     //knot grid operations panel
     private final TextField knotLoadField;
     private final Button editKnotButton;
+    
+    private boolean constructionIsChanged;
 
     public PreprocessorUi(PreprocessorDataService dataService,
                           PreprocessorDataMapper mapper,
@@ -77,6 +82,8 @@ public class PreprocessorUi
         this.mapper = mapper;
         this.holder = holder;
         this.rodMapper = rodMapper;
+
+        constructionIsChanged = false;
 
         datasetNameH2 = new H2();
 
@@ -274,6 +281,8 @@ public class PreprocessorUi
             editRodButton.setText("Edit rod");
 
             updateRodGrid();
+
+            constructionIsChanged = true;
         } else {
             if (rodGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
                 editRodLayout.setVisible(true);
@@ -298,6 +307,8 @@ public class PreprocessorUi
             selectedKnot.setLoad(Integer.valueOf(knotLoadField.getValue()));
 
             updateKnotGrid();
+
+            constructionIsChanged = true;
         }
     }
 
@@ -305,6 +316,7 @@ public class PreprocessorUi
     private void saveData() {
         dataService.mergePreprocessorData(holder.getPreprocessorData().get());
         holder.updateHolder();
+        constructionIsChanged = false;
     }
 
     private void addRod() {
@@ -318,10 +330,14 @@ public class PreprocessorUi
 
         updateRodGrid();
         updateKnotGrid();
+
+        constructionIsChanged = true;
     }
 
     private void deleteRod() {
         final List<RodDto> rods = holder.getPreprocessorData().get().getConstruction().getRods();
+
+        constructionIsChanged = true;
 
         if (rods.size() == 1) {
             Notification.show("At least one rod must be!");
@@ -356,7 +372,9 @@ public class PreprocessorUi
             leftSupportCheckbox.setValue(oldValue);
         }
 
-        updateSupportsInDto();
+        if(holder.getPreprocessorData().get().getConstruction().isSupportLeft() != newValue){
+            updateSupportsInDto();
+        }
     }
 
 
@@ -366,7 +384,9 @@ public class PreprocessorUi
             rightSupportCheckbox.setValue(oldValue);
         }
 
-        updateSupportsInDto();
+        if(holder.getPreprocessorData().get().getConstruction().isSupportRight() != newValue){
+            updateSupportsInDto();
+        }
     }
 
     private void updateSupportsInDto() {
@@ -374,6 +394,8 @@ public class PreprocessorUi
 
         construction.setSupportLeft(leftSupportCheckbox.getValue());
         construction.setSupportRight(rightSupportCheckbox.getValue());
+
+        constructionIsChanged = true;
     }
 
     @Override
@@ -386,6 +408,45 @@ public class PreprocessorUi
             updateSupports();
         } else {
             getUI().ifPresent(ui -> ui.navigate(""));
+        }
+    }
+
+    public boolean hasChanges(){
+        return constructionIsChanged;
+    }
+
+    @Override
+    public void beforeLeave(BeforeLeaveEvent event) {
+        if(hasChanges()){
+            final BeforeLeaveEvent.ContinueNavigationAction continueNavigationAction = event.postpone();
+
+            ConfirmDialog leaveConfirmDialog = new ConfirmDialog();
+            leaveConfirmDialog.setHeader("Confirm leave");
+            leaveConfirmDialog.setText("Are you sure you want to leave the page without save changes?");
+
+            leaveConfirmDialog.setConfirmText("Save");
+            leaveConfirmDialog.addConfirmListener(e -> {
+                saveData();
+                constructionIsChanged = false;
+                leaveConfirmDialog.close();
+                continueNavigationAction.proceed();
+            });
+
+            leaveConfirmDialog.setCancelText("Cancel");
+            leaveConfirmDialog.setCancelable(true);
+            leaveConfirmDialog.addCancelListener(e -> {
+               leaveConfirmDialog.close();
+            });
+
+            leaveConfirmDialog.setRejectable(true);
+            leaveConfirmDialog.setRejectText("Leave");
+
+            leaveConfirmDialog.addRejectListener(e -> {
+                leaveConfirmDialog.close();
+                continueNavigationAction.proceed();
+            });
+
+            leaveConfirmDialog.open();
         }
     }
 }
