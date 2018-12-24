@@ -67,7 +67,7 @@ public class RepositoryUi extends VerticalLayout {
         deleteConfirmDialog.setConfirmButtonTheme("error primary");
 
         grid.addColumn(PreprocessorDataDto::getDataName).setHeader("Name");
-        grid.addColumn(dto -> CreationMapper.creationToString(dto.getCreationDateTime())).setHeader("Creation");
+        grid.addColumn(dto -> CreationMapper.creationToString(dto.getCreationDateTime())).setHeader("Last changes");
         grid.addColumn(dto -> dto.getConstruction().getRods().size()).setHeader("Rods");
 
         VerticalLayout mainLayout = new VerticalLayout();
