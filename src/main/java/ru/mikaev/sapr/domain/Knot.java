@@ -17,5 +17,5 @@ public class Knot {
     @GeneratedValue
     private Long id;
 
-    private int load;
+    private double load;
 }

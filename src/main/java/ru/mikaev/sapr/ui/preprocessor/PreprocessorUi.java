@@ -74,6 +74,8 @@ public class PreprocessorUi
     
     private boolean constructionIsChanged;
 
+    private boolean isDrawAction;
+
     public PreprocessorUi(PreprocessorDataService dataService,
                           PreprocessorDataMapper mapper,
                           PreprocessorDataHolder holder,
@@ -84,6 +86,7 @@ public class PreprocessorUi
         this.rodMapper = rodMapper;
 
         constructionIsChanged = false;
+        isDrawAction = false;
 
         datasetNameH2 = new H2();
 
@@ -94,30 +97,30 @@ public class PreprocessorUi
         editRodLayout = new HorizontalLayout();
 
         rodL = new TextField("L");
-        rodL.setPattern("[0-9]*");
+        rodL.setPattern("[0-9]*\\.?[0-9]+");
         rodL.setPreventInvalidInput(true);
         rodL.addValueChangeListener(e -> onRodTextFieldChanged(e.getOldValue(), e.getValue(), e.getSource()));
 
         rodA = new TextField("A");
-        rodA.setPattern("[0-9]*");
+        rodA.setPattern("[0-9]*\\.?[0-9]+");
         rodA.setPreventInvalidInput(true);
         rodA.addValueChangeListener(e -> onRodTextFieldChanged(e.getOldValue(), e.getValue(), e.getSource()));
 
 
         rodE = new TextField("E");
-        rodE.setPattern("[0-9]*");
+        rodE.setPattern("[0-9]*\\.?[0-9]+");
         rodE.setPreventInvalidInput(true);
         rodE.addValueChangeListener(e -> onRodTextFieldChanged(e.getOldValue(), e.getValue(), e.getSource()));
 
 
         rodSigma = new TextField("σ");
-        rodSigma.setPattern("[0-9]*");
+        rodSigma.setPattern("[0-9]*\\.?[0-9]+");
         rodSigma.setPreventInvalidInput(true);
         rodSigma.addValueChangeListener(e -> onRodTextFieldChanged(e.getOldValue(), e.getValue(), e.getSource()));
 
 
         rodLoad = new TextField("Load");
-        rodLoad.setPattern("-?[0-9]*");
+        rodLoad.setPattern("[-]?[0-9]*\\.?[0-9]+");
         rodLoad.setPreventInvalidInput(true);
         rodLoad.addValueChangeListener(e -> onRodTextFieldChanged(e.getOldValue(), e.getValue(), e.getSource()));
 
@@ -130,7 +133,7 @@ public class PreprocessorUi
         //knot
         knotLoadField = new TextField();
         knotLoadField.setPlaceholder("Load");
-        knotLoadField.setPattern("-?[0-9]*");
+        knotLoadField.setPattern("[-]?[0-9]*\\.?[0-9]+");
         knotLoadField.setPreventInvalidInput(true);
         editKnotButton = new Button("Edit knot", e -> onEditKnot());
 
@@ -262,7 +265,10 @@ public class PreprocessorUi
         HorizontalLayout menu = new HorizontalLayout();
         menu.add(new Button("Previous page", event -> getUI().ifPresent(ui -> ui.navigate("repository"))));
         menu.add(new Button("Save construction", event -> saveData()));
-        menu.add(new Button("Draw construction", event -> Notification.show("Draw construction")));
+        menu.add(new Button("Draw construction", event -> {
+            isDrawAction = true;
+            getUI().ifPresent(ui -> ui.navigate("draw"));
+        }));
 
         return menu;
     }
@@ -271,11 +277,11 @@ public class PreprocessorUi
         if (editRodButton.getText().equals("Save rod")) {
             final RodDto selectedRod = rodGrid.getSelectionModel().getFirstSelectedItem().get();
 
-            selectedRod.setL(Integer.valueOf(rodL.getValue()));
-            selectedRod.setA(Integer.valueOf(rodA.getValue()));
-            selectedRod.setE(Integer.valueOf(rodE.getValue()));
-            selectedRod.setSigma(Integer.valueOf(rodSigma.getValue()));
-            selectedRod.setLoad(Integer.valueOf(rodLoad.getValue()));
+            selectedRod.setL(Double.valueOf(rodL.getValue()));
+            selectedRod.setA(Double.valueOf(rodA.getValue()));
+            selectedRod.setE(Double.valueOf(rodE.getValue()));
+            selectedRod.setSigma(Double.valueOf(rodSigma.getValue()));
+            selectedRod.setLoad(Double.valueOf(rodLoad.getValue()));
 
             editRodLayout.setVisible(false);
             editRodButton.setText("Edit rod");
@@ -304,7 +310,7 @@ public class PreprocessorUi
     private void onEditKnot() {
         if (knotGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
             final KnotDto selectedKnot = knotGrid.getSelectionModel().getFirstSelectedItem().get();
-            selectedKnot.setLoad(Integer.valueOf(knotLoadField.getValue()));
+            selectedKnot.setLoad(Double.valueOf(knotLoadField.getValue()));
 
             updateKnotGrid();
 
@@ -400,6 +406,13 @@ public class PreprocessorUi
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        knotGridSequance = 0;
+        rodGridSequance = 0;
+
+        if(isDrawAction){
+            isDrawAction = false;
+            return;
+        }
         if (holder.getPreprocessorData().isPresent()) {
             holder.updateHolder();
             datasetNameH2.setText("Name: " + holder.getPreprocessorData().get().getDataName());
@@ -417,9 +430,9 @@ public class PreprocessorUi
 
     @Override
     public void beforeLeave(BeforeLeaveEvent event) {
-        if(hasChanges()){
-            final BeforeLeaveEvent.ContinueNavigationAction continueNavigationAction = event.postpone();
+        final BeforeLeaveEvent.ContinueNavigationAction continueNavigationAction = event.postpone();
 
+        if(hasChanges()){
             ConfirmDialog leaveConfirmDialog = new ConfirmDialog();
             leaveConfirmDialog.setHeader("Confirm leave");
             leaveConfirmDialog.setText("Are you sure you want to leave the page without save changes?");
@@ -447,6 +460,13 @@ public class PreprocessorUi
             });
 
             leaveConfirmDialog.open();
+            return;
         }
+
+        continueNavigationAction.proceed();
+    }
+
+    public boolean isDrawAction() {
+        return isDrawAction;
     }
 }

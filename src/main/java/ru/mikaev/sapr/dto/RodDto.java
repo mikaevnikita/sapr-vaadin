@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class RodDto {
-    private int l;
+    private double l;
 
-    private int a;
+    private double a;
 
-    private int e;
+    private double e;
 
-    private int sigma;
+    private double sigma;
 
-    private int load;
+    private double load;
 
     private KnotDto leftKnot;
 

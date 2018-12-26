@@ -118,6 +118,16 @@ public class RepositoryUi extends VerticalLayout {
         }
     }
 
+    private void selectDataForProcess(){
+        final Optional<PreprocessorDataDto> selectedItem =
+                grid.getSelectionModel().getFirstSelectedItem();
+        if (!selectedItem.isPresent()) {
+            Notification.show("You must select a data set!");
+        } else {
+            holder.setPreprocessorData(selectedItem);
+        }
+    }
+
     private HorizontalLayout getCreatePanel() {
         HorizontalLayout createPanel = new HorizontalLayout();
 
@@ -139,7 +149,9 @@ public class RepositoryUi extends VerticalLayout {
 
         Button previousButton = new Button("Previous page", event -> getUI().ifPresent(ui -> ui.navigate("")));
 
-        createPanel.add(previousButton, dataNameTextField, createButton, deleteButton, updateButton);
+        Button selectDataForProcessButton = new Button("Select data for process", event -> selectDataForProcess());
+
+        createPanel.add(previousButton, dataNameTextField, createButton, deleteButton, updateButton, selectDataForProcessButton);
 
         return createPanel;
     }
