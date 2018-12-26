@@ -6,6 +6,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import org.springframework.data.util.Pair;
 import ru.mikaev.sapr.common.PreprocessorDataHolder;
 import ru.mikaev.sapr.common.ProcessorDataHolder;
 import ru.mikaev.sapr.dto.ConstructionDto;
@@ -33,7 +34,15 @@ public class MainView extends VerticalLayout {
         HorizontalLayout menuLayout = new HorizontalLayout();
         menuLayout.add(new Button("Preprocessor", event -> getUI().ifPresent(ui -> ui.navigate("repository"))));
         menuLayout.add(new Button("Processor", event -> calculate()));
-        menuLayout.add(new Button("Postprocessor", event -> Notification.show("Clicked!")));
+        menuLayout.add(new Button("Postprocessor", event ->
+        {
+            if(!processorDataHolder.getProcessorResult().isPresent()){
+                Notification.show("First you need to process a construction!");
+            }
+            else{
+                getUI().ifPresent(ui -> ui.navigate("postprocessor"));
+            }
+        }));
 
         add(menuLayout);
     }
@@ -44,7 +53,7 @@ public class MainView extends VerticalLayout {
         } else {
             ConstructionDto construction = holder.getPreprocessorData().get().getConstruction();
             Processor processor = new Processor(construction);
-            processorDataHolder.setProcessorResult(Optional.of(processor.process()));
+            processorDataHolder.setProcessorResult(Optional.of(Pair.of(construction, processor.process())));
             Notification.show("Processed!");
         }
     }

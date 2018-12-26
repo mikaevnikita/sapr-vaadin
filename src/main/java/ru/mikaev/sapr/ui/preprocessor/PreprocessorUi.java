@@ -27,6 +27,7 @@ import ru.mikaev.sapr.mapping.PreprocessorDataMapper;
 import ru.mikaev.sapr.mapping.RodMapper;
 import ru.mikaev.sapr.service.PreprocessorDataService;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -222,7 +223,8 @@ public class PreprocessorUi
                 .getPreprocessorData()
                 .ifPresent(dto -> {
                     rodGridSequance = 0;
-                    rodGrid.setItems(dto.getConstruction().getRods());
+                    final List<RodDto> rods = dto.getConstruction().getRods();
+                    rodGrid.setItems(rods);
                 });
     }
 
@@ -237,13 +239,14 @@ public class PreprocessorUi
                 .getConstruction()
                 .getRods();
 
-        Set<KnotDto> knots = new LinkedHashSet<>();
+        List<KnotDto> knots = new ArrayList<>();
 
-        for (RodDto rod : rods) {
-            final KnotDto leftKnot = rod.getLeftKnot();
-            final KnotDto rightKnot = rod.getRightKnot();
-            knots.add(leftKnot);
-            knots.add(rightKnot);
+        for(int i = 0; i < rods.size(); i++){
+            knots.add(rods.get(i).getLeftKnot());
+
+            if(i == rods.size() - 1){
+                knots.add(rods.get(i).getRightKnot());
+            }
         }
 
         knotGridSequance = 0;
