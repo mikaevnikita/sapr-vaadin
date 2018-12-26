@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 import ru.mikaev.sapr.dto.ProcessorResult;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component

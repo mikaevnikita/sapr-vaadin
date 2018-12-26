@@ -8,7 +8,6 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
-import org.vaadin.hezamu.canvas.Canvas;
 import ru.mikaev.sapr.common.PreprocessorDataHolder;
 
 
@@ -20,16 +19,15 @@ public class DrawUi extends VerticalLayout implements AfterNavigationObserver {
 
     private final PreprocessorDataHolder holder;
 
-    public DrawUi(PreprocessorUi preprocessorUi, PreprocessorDataHolder holder){
+    public DrawUi(PreprocessorUi preprocessorUi, PreprocessorDataHolder holder) {
         this.preprocessorUi = preprocessorUi;
         this.holder = holder;
-
 
 
         add(getMenu());
     }
 
-    HorizontalLayout getMenu(){
+    HorizontalLayout getMenu() {
         HorizontalLayout menu = new HorizontalLayout();
 
         menu.add(new Button("Previous page", event -> getUI().ifPresent(ui -> ui.navigate("preprocessor"))));
@@ -37,16 +35,15 @@ public class DrawUi extends VerticalLayout implements AfterNavigationObserver {
         return menu;
     }
 
-    private void drawConstruction(){
+    private void drawConstruction() {
 
     }
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        if(!preprocessorUi.isDrawAction()){
+        if (!preprocessorUi.isDrawAction()) {
             getUI().ifPresent(ui -> ui.navigate(""));
-        }
-        else{
+        } else {
             drawConstruction();
         }
     }

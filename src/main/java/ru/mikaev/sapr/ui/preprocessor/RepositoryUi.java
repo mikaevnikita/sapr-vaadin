@@ -118,7 +118,7 @@ public class RepositoryUi extends VerticalLayout {
         }
     }
 
-    private void selectDataForProcess(){
+    private void selectDataForProcess() {
         final Optional<PreprocessorDataDto> selectedItem =
                 grid.getSelectionModel().getFirstSelectedItem();
         if (!selectedItem.isPresent()) {

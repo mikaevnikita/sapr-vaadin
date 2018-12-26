@@ -9,11 +9,8 @@ import com.vaadin.flow.router.Route;
 import ru.mikaev.sapr.common.PreprocessorDataHolder;
 import ru.mikaev.sapr.common.ProcessorDataHolder;
 import ru.mikaev.sapr.dto.ConstructionDto;
-import ru.mikaev.sapr.dto.PreprocessorDataDto;
 import ru.mikaev.sapr.service.Processor;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Optional;
 
 @Route
@@ -41,11 +38,10 @@ public class MainView extends VerticalLayout {
         add(menuLayout);
     }
 
-    private void calculate(){
-        if(!holder.getPreprocessorData().isPresent()){
+    private void calculate() {
+        if (!holder.getPreprocessorData().isPresent()) {
             Notification.show("First you need to choose a data set!");
-        }
-        else{
+        } else {
             ConstructionDto construction = holder.getPreprocessorData().get().getConstruction();
             Processor processor = new Processor(construction);
             processorDataHolder.setProcessorResult(Optional.of(processor.process()));

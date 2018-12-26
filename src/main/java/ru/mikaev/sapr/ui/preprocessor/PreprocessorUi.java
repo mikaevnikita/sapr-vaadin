@@ -71,7 +71,7 @@ public class PreprocessorUi
     //knot grid operations panel
     private final TextField knotLoadField;
     private final Button editKnotButton;
-    
+
     private boolean constructionIsChanged;
 
     private boolean isDrawAction;
@@ -378,7 +378,7 @@ public class PreprocessorUi
             leftSupportCheckbox.setValue(oldValue);
         }
 
-        if(holder.getPreprocessorData().get().getConstruction().isSupportLeft() != newValue){
+        if (holder.getPreprocessorData().get().getConstruction().isSupportLeft() != newValue) {
             updateSupportsInDto();
         }
     }
@@ -390,7 +390,7 @@ public class PreprocessorUi
             rightSupportCheckbox.setValue(oldValue);
         }
 
-        if(holder.getPreprocessorData().get().getConstruction().isSupportRight() != newValue){
+        if (holder.getPreprocessorData().get().getConstruction().isSupportRight() != newValue) {
             updateSupportsInDto();
         }
     }
@@ -409,7 +409,7 @@ public class PreprocessorUi
         knotGridSequance = 0;
         rodGridSequance = 0;
 
-        if(isDrawAction){
+        if (isDrawAction) {
             isDrawAction = false;
             return;
         }
@@ -424,7 +424,7 @@ public class PreprocessorUi
         }
     }
 
-    public boolean hasChanges(){
+    public boolean hasChanges() {
         return constructionIsChanged;
     }
 
@@ -432,7 +432,7 @@ public class PreprocessorUi
     public void beforeLeave(BeforeLeaveEvent event) {
         final BeforeLeaveEvent.ContinueNavigationAction continueNavigationAction = event.postpone();
 
-        if(hasChanges()){
+        if (hasChanges()) {
             ConfirmDialog leaveConfirmDialog = new ConfirmDialog();
             leaveConfirmDialog.setHeader("Confirm leave");
             leaveConfirmDialog.setText("Are you sure you want to leave the page without save changes?");
@@ -448,7 +448,7 @@ public class PreprocessorUi
             leaveConfirmDialog.setCancelText("Cancel");
             leaveConfirmDialog.setCancelable(true);
             leaveConfirmDialog.addCancelListener(e -> {
-               leaveConfirmDialog.close();
+                leaveConfirmDialog.close();
             });
 
             leaveConfirmDialog.setRejectable(true);
