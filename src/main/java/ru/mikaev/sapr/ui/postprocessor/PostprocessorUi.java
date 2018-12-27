@@ -47,8 +47,8 @@ public class PostprocessorUi extends VerticalLayout implements AfterNavigationOb
         postprocessorGrid = new Grid<>();
         postprocessorGrid.addColumn(PostprocessorDto::getRodNum).setHeader("Rod number");
         postprocessorGrid.addColumn(PostprocessorDto::getX).setHeader("X");
-        postprocessorGrid.addColumn(PostprocessorDto::getNx).setHeader("Nx");
         postprocessorGrid.addColumn(PostprocessorDto::getUx).setHeader("Ux");
+        postprocessorGrid.addColumn(PostprocessorDto::getNx).setHeader("Nx");
         postprocessorGrid.addColumn(PostprocessorDto::getGx).setHeader("Gx");
         postprocessorGrid.addColumn(PostprocessorDto::getSigma).setHeader("σ");
 
