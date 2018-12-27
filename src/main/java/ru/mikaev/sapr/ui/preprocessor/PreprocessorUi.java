@@ -145,6 +145,7 @@ public class PreprocessorUi
         rightSupportCheckbox.addValueChangeListener(e -> onRightSupportChanged(e.getOldValue(), e.getValue()));
 
         rodGrid = new Grid<>();
+        rodGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         rodGrid.addColumn(this::indexOfRod).setHeader("Number");
         rodGrid.addColumn(RodDto::getL).setHeader("L");
         rodGrid.addColumn(RodDto::getA).setHeader("A");

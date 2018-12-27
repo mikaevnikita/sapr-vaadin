@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,5 +31,61 @@ public class RodDto {
         this.load = dto.load;
         this.leftKnot = new KnotDto(dto.leftKnot);
         this.rightKnot = new KnotDto(dto.rightKnot);
+    }
+
+    public double getL() {
+        return l;
+    }
+
+    public void setL(double l) {
+        this.l = l;
+    }
+
+    public double getA() {
+        return a;
+    }
+
+    public void setA(double a) {
+        this.a = a;
+    }
+
+    public double getE() {
+        return e;
+    }
+
+    public void setE(double e) {
+        this.e = e;
+    }
+
+    public double getSigma() {
+        return sigma;
+    }
+
+    public void setSigma(double sigma) {
+        this.sigma = sigma;
+    }
+
+    public double getLoad() {
+        return load;
+    }
+
+    public void setLoad(double load) {
+        this.load = load;
+    }
+
+    public KnotDto getLeftKnot() {
+        return leftKnot;
+    }
+
+    public void setLeftKnot(KnotDto leftKnot) {
+        this.leftKnot = leftKnot;
+    }
+
+    public KnotDto getRightKnot() {
+        return rightKnot;
+    }
+
+    public void setRightKnot(KnotDto rightKnot) {
+        this.rightKnot = rightKnot;
     }
 }

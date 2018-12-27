@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class KnotDto {
@@ -12,5 +11,13 @@ public class KnotDto {
 
     public KnotDto(KnotDto dto) {
         this.load = dto.load;
+    }
+
+    public double getLoad() {
+        return load;
+    }
+
+    public void setLoad(double load) {
+        this.load = load;
     }
 }

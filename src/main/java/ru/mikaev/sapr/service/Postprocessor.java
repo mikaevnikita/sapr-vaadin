@@ -14,8 +14,6 @@ public class Postprocessor {
     private final ProcessorResult processorResult;
     private final PostprocessorUiConfiguration configuration;
 
-    private double maxLen;
-
     public Postprocessor(ConstructionDto construction,
                          ProcessorResult processorResult,
                          PostprocessorUiConfiguration configuration){
@@ -26,9 +24,6 @@ public class Postprocessor {
 
     public List<PostprocessorDto> postprocess(){
         final List<RodDto> rods = construction.getRods();
-
-        for(RodDto rod : rods)
-            maxLen += rod.getL();
 
         List<PostprocessorDto> postprocessorDtos = new ArrayList<>();
 
@@ -43,11 +38,11 @@ public class Postprocessor {
             double step = currentRod.getL() / configuration.getPartitionsCount();
             double x = 0;
 
-            for(int j = 0; j < configuration.getPartitionsCount(); j++)
+            for(int j = 0; j < configuration.getPartitionsCount() + 1; j++)
             {
                 PostprocessorDto postprocessorDto = new PostprocessorDto();
 
-                postprocessorDto.setRodNum(j+1);
+                postprocessorDto.setRodNum(i+1);
 
                 postprocessorDto.setX(x);
 
